@@ -1,0 +1,382 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API de Reservas de Vuelos",
+        "description": "API para gestionar reservas y pasajeros en tiempo real.",
+        "contact": {
+            "email": "claudio.cabrera@example.com"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/reservations": {
+            "get": {
+                "tags": [
+                    "Reservas"
+                ],
+                "summary": "Lista todas las reservas",
+                "operationId": "44ecdae15e077d1009107cf85377f819",
+                "responses": {
+                    "200": {
+                        "description": "Lista de reservas obtenida exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Booking"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Reservas"
+                ],
+                "summary": "Crea una nueva reserva",
+                "operationId": "1f7418cea9f19f3795d22728f50b2571",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreBookingRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Reserva creada exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Booking"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/reservations/{id}/status": {
+            "put": {
+                "tags": [
+                    "Reservas"
+                ],
+                "summary": "Actualiza el estado de una reserva",
+                "operationId": "5ce0ffde3741dadd71a5ba8dcdef8243",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la reserva a actualizar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "CONFIRMED",
+                                            "CANCELLED",
+                                            "CHECKED_IN"
+                                        ],
+                                        "example": "CONFIRMED"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Estado de reserva actualizado correctamente."
+                    },
+                    "404": {
+                        "description": "Reserva no encontrada."
+                    }
+                }
+            }
+        },
+        "/api/reservations/{id}": {
+            "get": {
+                "tags": [
+                    "Reservas"
+                ],
+                "summary": "Muestra el detalle de una reserva",
+                "operationId": "d6f3dd3cafae5176078c9194666c5be4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID de la reserva a mostrar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalles de la reserva obtenidos exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Booking"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Reserva no encontrada."
+                    }
+                }
+            }
+        },
+        "/api/passengers/{id}": {
+            "get": {
+                "tags": [
+                    "Pasajeros"
+                ],
+                "summary": "Muestra el detalle de un pasajero",
+                "operationId": "d18b33bfa0110696d1a1400ac0c3932a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del pasajero a mostrar",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalles del pasajero obtenidos exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Passenger"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Pasajero no encontrado."
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "StoreBookingRequest": {
+                "required": [
+                    "flight_number",
+                    "departure_time",
+                    "passengers"
+                ],
+                "properties": {
+                    "flight_number": {
+                        "description": "El número del vuelo",
+                        "type": "string",
+                        "example": "VUELO-42-CDMX"
+                    },
+                    "departure_time": {
+                        "description": "La fecha y hora de salida del vuelo",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-10-25 10:00:00"
+                    },
+                    "passengers": {
+                        "description": "Lista de pasajeros para la reserva",
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "example": "Claudio"
+                                },
+                                "last_name": {
+                                    "type": "string",
+                                    "example": "Cabrera"
+                                },
+                                "passport_number": {
+                                    "type": "string",
+                                    "example": "1111121"
+                                }
+                            },
+                            "type": "object"
+                        },
+                        "minItems": 1
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateBookingStatusRequest": {
+                "required": [
+                    "status"
+                ],
+                "properties": {
+                    "status": {
+                        "description": "El nuevo estado de la reserva",
+                        "type": "string",
+                        "enum": [
+                            "CONFIRMED",
+                            "CANCELLED",
+                            "CHECKED_IN"
+                        ],
+                        "example": "CONFIRMED"
+                    }
+                },
+                "type": "object"
+            },
+            "Booking": {
+                "title": "Reserva",
+                "description": "Modelo de una reserva de vuelo",
+                "properties": {
+                    "id": {
+                        "description": "ID de la reserva",
+                        "type": "integer",
+                        "readOnly": true,
+                        "example": 1
+                    },
+                    "flight_number": {
+                        "description": "Número de vuelo",
+                        "type": "string",
+                        "example": "VUELO-42-CDMX"
+                    },
+                    "status": {
+                        "description": "Estado de la reserva",
+                        "type": "string",
+                        "enum": [
+                            "PENDING",
+                            "CONFIRMED",
+                            "CANCELLED",
+                            "CHECKED_IN"
+                        ],
+                        "example": "PENDING"
+                    },
+                    "departure_time": {
+                        "description": "Fecha y hora de salida del vuelo",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-10-25 10:00:00"
+                    },
+                    "passengers": {
+                        "description": "Pasajeros asociados a la reserva",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Passenger"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "Notification": {
+                "title": "Notificación",
+                "description": "Modelo de una notificación de evento",
+                "properties": {
+                    "id": {
+                        "description": "ID de la notificación",
+                        "type": "string",
+                        "format": "uuid",
+                        "readOnly": true,
+                        "example": "f8f8f8f8-f8f8-4f8f-8f8f-8f8f8f8f8f8f"
+                    },
+                    "type": {
+                        "description": "Tipo de notificación",
+                        "type": "string",
+                        "example": "App\\Notifications\\BookingStatusChanged"
+                    },
+                    "notifiable_type": {
+                        "description": "Tipo de modelo al que se notifica",
+                        "type": "string",
+                        "example": "App\\Models\\Booking"
+                    },
+                    "notifiable_id": {
+                        "description": "ID del modelo al que se notifica",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "data": {
+                        "description": "Datos de la notificación",
+                        "type": "object",
+                        "example": {
+                            "id": 1,
+                            "status": "CONFIRMED"
+                        }
+                    },
+                    "read_at": {
+                        "description": "Fecha y hora de lectura de la notificación",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2025-10-25 10:00:00",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "Passenger": {
+                "title": "Pasajero",
+                "description": "Modelo de un pasajero en una reserva",
+                "properties": {
+                    "id": {
+                        "description": "ID del pasajero",
+                        "type": "integer",
+                        "readOnly": true,
+                        "example": 18
+                    },
+                    "booking_id": {
+                        "description": "ID de la reserva a la que pertenece el pasajero",
+                        "type": "integer",
+                        "example": 17
+                    },
+                    "name": {
+                        "description": "Nombre del pasajero",
+                        "type": "string",
+                        "example": "Claudio"
+                    },
+                    "last_name": {
+                        "description": "Apellido del pasajero",
+                        "type": "string",
+                        "example": "Cabrera"
+                    },
+                    "passport_number": {
+                        "description": "Número de pasaporte del pasajero",
+                        "type": "string",
+                        "example": "1111121"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Reservas",
+            "description": "Operaciones de gestión de reservas"
+        },
+        {
+            "name": "Pasajeros",
+            "description": "Operaciones de gestión de pasajeros"
+        }
+    ]
+}
