@@ -65,7 +65,7 @@ type: ref: Ahora MySQL utiliza un índice para encontrar las filas, lo que es si
 
 key: status_index: Confirma que el índice creado se utilizó para la consulta.
 
-## rows: 3: El número de filas examinadas se redujo a solo 3, demostrando una eficiencia masiva.
+rows: 3: El número de filas examinadas se redujo a solo 3, demostrando una eficiencia masiva.
 
 ## 4. Testing Unitario
 
