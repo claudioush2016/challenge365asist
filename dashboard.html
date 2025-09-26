@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Dashboard de Reservas en Tiempo Real</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+        .log { border: 1px solid #ccc; padding: 15px; margin-top: 20px; border-radius: 8px; background-color: #f9f9f9; }
+        h1, h2 { color: #333; }
+        pre { background-color: #e8e8e8; padding: 15px; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }
+        .status-confirmed { color: #28a745; font-weight: bold; }
+        .status-cancelled { color: #dc3545; font-weight: bold; }
+        .status-checked-in { color: #007bff; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Dashboard de Reservas</h1>
+    <p>Este es un cliente de prueba para visualizar las actualizaciones en tiempo real de tu API de Laravel.</p>
+    <div class="log">
+        <h2>Eventos Recibidos desde Node.js</h2>
+        <pre id="event-log">Esperando eventos...</pre>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        // Conéctate al servidor de streaming de Node.js que corre en el puerto 3000
+        const socket = io('http://localhost:3000');
+        const eventLog = document.getElementById('event-log');
+
+        // Escucha los eventos que se emiten desde Node.js con el nombre 'bookingUpdate'
+        socket.on('bookingUpdate', (data) => {
+            const now = new Date().toLocaleTimeString();
+            const statusClass = (data.status === 'CONFIRMED') ? 'status-confirmed' : ((data.status === 'CANCELLED') ? 'status-cancelled' : ((data.status === 'CHECKED_IN') ? 'status-checked-in' : ''));
+            const message = `[${now}] Nuevo evento para la reserva #${data.id}: \n<span class="${statusClass}">Estado: ${data.status}</span>\n<pre>${JSON.stringify(data, null, 2)}</pre>\n\n`;
+            eventLog.innerHTML = message + eventLog.innerHTML;
+        });
+
+        // Muestra el estado de la conexión en el dashboard
+        socket.on('connect', () => {
+            eventLog.innerHTML = `<b>Conectado</b> al servicio de streaming.\n\n`;
+        });
+        
+        socket.on('disconnect', () => {
+            eventLog.innerHTML = `<b>Desconectado</b> del servicio de streaming.\n\n` + eventLog.innerHTML;
+        });
+    </script>
+</body>
+</html>
