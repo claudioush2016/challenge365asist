@@ -10,8 +10,9 @@ return new class extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->string('flight_number');
-            $table->string('status')->default('pending'); // Ej. 'pending', 'confirmed', 'cancelled'
+            $table->string('status')->default('pending')->index(); // Ej. 'pending', 'confirmed', 'cancelled'
             $table->timestamps();
+            $table->index('created_at');
         });
     }
 
